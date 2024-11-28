@@ -1,29 +1,31 @@
 #include "rec_decent.h"
 #include <stdio.h>
+#include <ctype.h>
 #include <assert.h>
 #include <math.h>
+#include <string.h>
 
-const char* string = "2^(2*4)";
+const char* string = "2^-2";
 int position = 0;
 
-int RecursiveDecent(){
+double RecursiveDecent(){
     return GetG();
 }
 
-int GetG(){
-    int val = GetE();
+double GetG(){
+    double val = GetE();
     if (string[position] != '\0')
-        SyntaxError();
+        SyntaxError(__FILE__, __LINE__);
     position++;
     return val;
 }
 
-int GetE(){
-    int val_first = GetT();
+double GetE(){
+    double val_first = GetT();
     while (string[position] == '+' || string[position] == '-'){
         int oper = string[position];
         position++;
-        int val_second = GetT();
+        double val_second = GetT();
         if (oper == '+')
             val_first += val_second;
         else
@@ -33,12 +35,12 @@ int GetE(){
     return val_first;
 }
 
-int GetT(){
-    int val_first = GetPower();
+double GetT(){
+    double val_first = GetPower();
     while (string[position] == '*' || string[position] == '/'){
         int oper = string[position];
         position++;
-        int val_second = GetPower();
+        double val_second = GetPower();
         if (oper == '*')
             val_first *= val_second;
         else if (oper == '/')
@@ -49,12 +51,12 @@ int GetT(){
     return val_first;
 }
 
-int GetP(){
+double GetP(){
     if (string[position] == '('){
         position++;
-        int val = GetE();
+        double val = GetE();
         if (string[position] != ')')
-            SyntaxError();
+            SyntaxError(__FILE__, __LINE__);
         position++;
         return val;
     }
@@ -62,29 +64,44 @@ int GetP(){
         return GetN();
 }
 
-int GetPower(){
-    int val_first = GetP();
+double GetPower(){
+    double val_first = GetP();
     if (string[position] == '^'){
         position++;
-        int val_second = GetP();
+        double val_second = GetP();
         return pow(val_first, val_second);
     }
 
     return val_first;
 }
 
-int GetN(){
-    int val = 0;
+double GetN(){
+    double val = 0;
+    int counter = 0;
+    int flag_sign = 0;
+    int flag_double = 0;
     int old_position = position;
-    while ('0' <= string[position] && string[position] <= '9'){
-        val = val * 10 + (string[position] - '0');
+    while (('0' <= string[position] && string[position] <= '9') || string[position] == '.' || string[position] == '-'){
+        if (string[position] == '.')
+            flag_double = 1;
+        else if (string[position] == '-')
+            flag_sign = 1;
+        else
+            val = val * 10 + (string[position] - '0');
+        if (flag_double)
+            counter++;
+
         position++;
     }
     if (old_position == position)
-        SyntaxError();
+        SyntaxError(__FILE__, __LINE__);
+    val /= pow(10, counter);
+    if (flag_sign)
+        val *= -1;
     return val;
 }
 
-void SyntaxError(){
+void SyntaxError(const char* file, const size_t line){
+    fprintf(stderr, "%s:%lu\n", file, line);
     assert(0);
 }

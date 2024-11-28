@@ -2,6 +2,6 @@
 #include <stdio.h>
 
 int main(void){
-    fprintf(stderr, "%d\n", RecursiveDecent());
+    fprintf(stderr, "%lg\n", RecursiveDecent());
     return 0;
 }

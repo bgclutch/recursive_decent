@@ -1,13 +1,15 @@
 #ifndef REC_DECENT_H_
 #define REC_DECENT_H_
 
-int RecursiveDecent();
-int GetG();
-int GetE();
-int GetT();
-int GetP();
-int GetN();
-int GetPower();
-void SyntaxError();
+#include <string.h>
+
+double RecursiveDecent();
+double GetG();
+double GetE();
+double GetT();
+double GetP();
+double GetN();
+double GetPower();
+void SyntaxError(const char* file, const size_t line);
 
 #endif // REC_DECENT_H_
