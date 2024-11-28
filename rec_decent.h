@@ -10,6 +10,7 @@ double GetT();
 double GetP();
 double GetN();
 double GetPower();
+double GetFunction();
 void SyntaxError(const char* file, const size_t line);
 
 #endif // REC_DECENT_H_

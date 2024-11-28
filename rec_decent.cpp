@@ -5,14 +5,14 @@
 #include <math.h>
 #include <string.h>
 
-const char* string = "2^-2";
+const char* string = "(cos(0)*321)^2";
 int position = 0;
 
 double RecursiveDecent(){
     return GetG();
 }
 
-double GetG(){
+double GetG() {
     double val = GetE();
     if (string[position] != '\0')
         SyntaxError(__FILE__, __LINE__);
@@ -36,17 +36,15 @@ double GetE(){
 }
 
 double GetT(){
-    double val_first = GetPower();
+    double val_first = GetFunction();
     while (string[position] == '*' || string[position] == '/'){
         int oper = string[position];
         position++;
-        double val_second = GetPower();
+        double val_second = GetFunction();
         if (oper == '*')
             val_first *= val_second;
-        else if (oper == '/')
-            val_first /= val_second;
         else
-            pow(val_first, val_second);
+            val_first /= val_second;
     }
     return val_first;
 }
@@ -75,6 +73,28 @@ double GetPower(){
     return val_first;
 }
 
+double GetFunction(){
+    if (strncmp(string + position, "sin", strlen("sin")) == 0){
+        position += (int)(strlen("sin"));
+        return sin(GetPower());
+    }
+    else if (strncmp(string + position, "cos", strlen("cos")) == 0){
+        position += (int)(strlen("cos"));
+        return cos(GetPower());
+    }
+    else if (strncmp(string + position, "tan", strlen("tan")) == 0){
+        position += (int)(strlen("tan"));
+        return tan(GetPower());
+    }
+    else if (strncmp(string + position, "ln", strlen("ln")) == 0){
+        position += (int)(strlen("ln"));
+        return log(GetPower());
+    }
+    else {
+        return GetPower();
+    }
+}
+
 double GetN(){
     double val = 0;
     int counter = 0;
@@ -82,14 +102,14 @@ double GetN(){
     int flag_double = 0;
     int old_position = position;
     while (('0' <= string[position] && string[position] <= '9') || string[position] == '.' || string[position] == '-'){
+        if (flag_double)
+            counter++;
         if (string[position] == '.')
             flag_double = 1;
         else if (string[position] == '-')
             flag_sign = 1;
         else
             val = val * 10 + (string[position] - '0');
-        if (flag_double)
-            counter++;
 
         position++;
     }
@@ -98,6 +118,7 @@ double GetN(){
     val /= pow(10, counter);
     if (flag_sign)
         val *= -1;
+
     return val;
 }
 
