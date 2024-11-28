@@ -1,8 +1,9 @@
 #include "rec_decent.h"
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
-const char* string = "25*10*(3*(25-10*2)+1)";
+const char* string = "2^(2*4)";
 int position = 0;
 
 int RecursiveDecent(){
@@ -28,19 +29,22 @@ int GetE(){
         else
             val_first -= val_second;
     }
+
     return val_first;
 }
 
 int GetT(){
-    int val_first = GetP();
+    int val_first = GetPower();
     while (string[position] == '*' || string[position] == '/'){
         int oper = string[position];
         position++;
-        int val_second = GetP();
+        int val_second = GetPower();
         if (oper == '*')
             val_first *= val_second;
-        else
+        else if (oper == '/')
             val_first /= val_second;
+        else
+            pow(val_first, val_second);
     }
     return val_first;
 }
@@ -58,6 +62,17 @@ int GetP(){
         return GetN();
 }
 
+int GetPower(){
+    int val_first = GetP();
+    if (string[position] == '^'){
+        position++;
+        int val_second = GetP();
+        return pow(val_first, val_second);
+    }
+
+    return val_first;
+}
+
 int GetN(){
     int val = 0;
     int old_position = position;
@@ -69,7 +84,6 @@ int GetN(){
         SyntaxError();
     return val;
 }
-
 
 void SyntaxError(){
     assert(0);

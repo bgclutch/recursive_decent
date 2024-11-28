@@ -7,6 +7,7 @@ int GetE();
 int GetT();
 int GetP();
 int GetN();
+int GetPower();
 void SyntaxError();
 
 #endif // REC_DECENT_H_
